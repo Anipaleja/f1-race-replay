@@ -62,7 +62,7 @@ def cli_load():
         case "Qualifying":
             flag = "--qualifying" 
         case "Sprint Qualifying":
-            flag = "--qualifying --sprint"  
+            flag = "--sprint-qualifying"  
         case "Sprint":
             flag = "--sprint"     
     main_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..', 'main.py'))
