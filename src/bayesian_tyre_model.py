@@ -44,7 +44,7 @@ class StateSpaceConfig:
     fuel_burn_rate: float = 1.6
     
     enable_warmup: bool = True
-    enable_track_abrasion: bool = True  # NEW: Toggle abrasion estimation
+    enable_track_abrasion: bool = True  
     
     debug_logging: bool = False
     
@@ -612,8 +612,8 @@ class BayesianTyreDegradationModel:
             'compound': compound,
             'category': tyre.category.value,
             'degradation_rate': tyre.degradation_rate,
-            'effective_degradation': effective_degradation,  # NEW
-            'track_abrasion': self.track_abrasion,  # NEW
+            'effective_degradation': effective_degradation,  
+            'track_abrasion': self.track_abrasion,  
             'mismatch_penalty': mismatch_penalty,
             'track_condition': track_condition,
             'confidence_95': (
@@ -660,5 +660,5 @@ class BayesianTyreDegradationModel:
             'latent_pace': info['latent_pace'],
             'mismatch_penalty': info['mismatch_penalty'],
             'track_condition': info['track_condition'],
-            'track_abrasion': info['track_abrasion']  # NEW
+            'track_abrasion': info['track_abrasion']  
         }

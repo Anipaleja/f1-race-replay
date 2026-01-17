@@ -5,7 +5,6 @@ from src.bayesian_tyre_model import BayesianTyreDegradationModel
 
 
 class TyreDegradationIntegrator:
-    """Integration layer for UI compatibility."""
     
     def __init__(self, session=None, laps_df: Optional[pd.DataFrame] = None):
         self.session = session
@@ -15,7 +14,7 @@ class TyreDegradationIntegrator:
         self._cache = {}
     
     def initialize_from_session(self) -> bool:
-        """Initialize model from session data."""
+        
         try:
             if self._laps_df is None:
                 if self.session is None:
@@ -46,7 +45,7 @@ class TyreDegradationIntegrator:
             return False
     
     def is_initialized(self) -> bool:
-        """Check if model is initialized."""
+        
         return self._initialized
     
     def get_tyre_health(
@@ -56,7 +55,7 @@ class TyreDegradationIntegrator:
         track_condition: Optional[str] = None,
         force_refresh: bool = False
     ) -> Optional[Dict]:
-        """Get tyre health - compatible with existing UI."""
+        
         if not self._initialized:
             return None
         
@@ -104,7 +103,7 @@ class TyreDegradationIntegrator:
         except (ValueError, TypeError):
             return None
         
-        # Try to extract track condition from frame data
+        
         track_condition = frame_data.get("track_condition")
         
         return self.get_tyre_health(driver_code, lap_num, track_condition)
