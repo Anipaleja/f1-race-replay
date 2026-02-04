@@ -131,10 +131,11 @@ class IncidentDetector:
                         for other_driver in common_drivers:
                             other_prev_pos = prev_ranking.index(other_driver) if other_driver in prev_ranking else -1
                             other_curr_pos = curr_ranking.index(other_driver) if other_driver in curr_ranking else -1
-                            # Driver's position worsened if their rank got larger (worse)
-                            if other_prev_pos >= 0 and other_curr_pos >= 0 and other_curr_pos > other_prev_pos:
+                            # Driver's position worsened if their rank decreased (lower index = worse in worst-first ranking)
+                            if other_prev_pos >= 0 and other_curr_pos >= 0 and other_curr_pos < other_prev_pos:
                                 # Check if this worsening is due to our driver passing
-                                if other_prev_pos < prev_pos and other_curr_pos >= curr_pos:
+                                # Our driver passed if other was ahead (higher index) and now is not (lower or equal index)
+                                if other_prev_pos > prev_pos and other_curr_pos <= curr_pos:
                                     overtaken = other_driver
                                     break
                         
