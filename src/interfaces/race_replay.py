@@ -16,6 +16,8 @@ from src.ui_components import (
     draw_finish_line
 )
 from src.tyre_degradation_integration import TyreDegradationIntegrator
+from src.incident_detection import IncidentDetector
+from src.ui_components_incidents import IncidentsPanelComponent
 
 
 SCREEN_WIDTH = 1280
@@ -116,6 +118,10 @@ class F1RaceReplayWindow(arcade.Window):
                 total_laps=total_laps
             )
 
+        # Initialize incidents detection
+        self.incidents_panel_comp = IncidentsPanelComponent(left=20, top=450, visible=visible_hud)
+        self._initialize_incidents()
+
         self.is_rewinding = False
         self.is_forwarding = False
         self.was_paused_before_hold = False
@@ -196,6 +202,17 @@ class F1RaceReplayWindow(arcade.Window):
         self.leaderboard_rects = []  # list of tuples: (code, left, bottom, right, top)
         # store previous leaderboard order for up/down arrows
         self.last_leaderboard_order = None
+
+    def _initialize_incidents(self):
+        """Initialize incident detection from telemetry data"""
+        try:
+            print("Detecting race incidents...")
+            detector = IncidentDetector(self.frames, self.drivers)
+            incidents = detector.detect_all_incidents()
+            self.incidents_panel_comp.set_incidents(incidents)
+            print(f"✓ Detected {len(incidents)} incidents")
+        except Exception as e:
+            print(f"✗ Incident detection failed: {e}")
 
     def _interpolate_points(self, xs, ys, interp_points=2000):
         t_old = np.linspace(0, 1, len(xs))
@@ -571,6 +588,9 @@ class F1RaceReplayWindow(arcade.Window):
         # Selected driver info component
         self.driver_info_comp.draw(self)
         
+        # Incidents panel component
+        self.incidents_panel_comp.draw(self.width, self.height)
+        
         # Race Progress Bar with event markers (DNF, flags, leader changes)
         self.progress_bar_comp.draw(self)
         
@@ -674,6 +694,24 @@ class F1RaceReplayWindow(arcade.Window):
             self.progress_bar_comp.toggle_visibility() # toggle progress bar visibility
         elif symbol == arcade.key.I:
             self.session_info_comp.toggle_visibility() # toggle session info banner
+        elif symbol == arcade.key.C:
+            # Toggle incidents panel visibility
+            self.incidents_panel_comp.toggle_visibility()
+        elif symbol == arcade.key.N:
+            # Jump to next incident
+            frame_number = self.incidents_panel_comp.select_next_incident()
+            if frame_number is not None:
+                self.frame_index = float(frame_number)
+                self.paused = True
+        elif symbol == arcade.key.P:
+            # Jump to previous incident
+            frame_number = self.incidents_panel_comp.select_prev_incident()
+            if frame_number is not None:
+                self.frame_index = float(frame_number)
+                self.paused = True
+        elif symbol == arcade.key.F:
+            # Cycle incident type filter
+            self.incidents_panel_comp.toggle_filter()
 
     def on_key_release(self, symbol: int, modifiers: int):
         if symbol == arcade.key.RIGHT:
